@@ -1,0 +1,134 @@
+# Dependencies
+backend/node_modules/
+web/node_modules/
+backend/.pnp
+web/.pnp
+backend/.pnp.js
+web/.pnp.js
+backend/yarn.lock
+web/yarn.lock
+backend/package-lock.json
+web/package-lock.json
+
+# Testing
+backend/coverage/
+web/coverage/
+backend/.nyc_output/
+web/.nyc_output/
+
+# Production/Build
+backend/build/
+web/build/
+backend/dist/
+web/dist/
+backend/out/
+web/out/
+backend/.next/
+web/.next/
+backend/.nuxt/
+web/.nuxt/
+backend/.output/
+web/.output/
+
+# Environment files
+backend/.env
+web/.env
+backend/.env.local
+web/.env.local
+backend/.env.development.local
+web/.env.development.local
+backend/.env.test.local
+web/.env.test.local
+backend/.env.production.local
+web/.env.production.local
+backend/.env*.local
+web/.env*.local
+
+# IDE and Editor files
+backend/.idea/
+web/.idea/
+backend/.vscode/
+web/.vscode/
+backend/*.swp
+web/*.swp
+backend/*.swo
+web/*.swo
+.DS_Store
+Thumbs.db
+
+# Debug logs
+backend/npm-debug.log*
+web/npm-debug.log*
+backend/yarn-debug.log*
+web/yarn-debug.log*
+backend/yarn-error.log*
+web/yarn-error.log*
+backend/debug.log
+web/debug.log
+
+# Cache directories
+backend/.cache/
+web/.cache/
+backend/.npm/
+web/.npm/
+backend/.eslintcache
+web/.eslintcache
+backend/.stylelintcache
+web/.stylelintcache
+
+# Optional REPL history
+backend/.node_repl_history
+web/.node_repl_history
+
+# Output of 'npm pack'
+backend/*.tgz
+web/*.tgz
+
+# Yarn Integrity file
+backend/.yarn-integrity
+web/.yarn-integrity
+
+# Python (for backend)
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.py[cod]
+backend/**/*.py[cod]
+backend/*$py.class
+backend/**/*$py.class
+backend/*.so
+backend/.Python
+backend/env/
+backend/venv/
+backend/ENV/
+backend/.env/
+backend/.venv/
+backend/pip-log.txt
+backend/pip-delete-this-directory.txt
+backend/*.log
+backend/**/*.log
+backend/*.sqlite3
+backend/**/*.sqlite3
+backend/*.db
+backend/**/*.db
+
+# Java (for backend)
+backend/*.class
+backend/*.jar
+backend/*.war
+backend/*.ear
+backend/*.zip
+backend/*.tar.gz
+backend/*.rar
+backend/hs_err_pid*
+backend/target/
+
+# Misc
+.DS_Store
+backend/.env.local
+web/.env.local
+backend/.env.development.local
+web/.env.development.local
+backend/.env.test.local
+web/.env.test.local
+backend/.env.production.local
+web/.env.production.local
