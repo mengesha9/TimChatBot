@@ -10,7 +10,7 @@ export const API_ENDPOINTS = {
   
   // Chat endpoints
   CHAT: '/chat',
-  CHAT_HISTORY: '/chat-history',
+  CHAT_HISTORY: '/chat/history',
   DELETE_CHAT_HISTORY: '/delete-chat-history',
   CLEAR_VECTOR_STORE: '/clear-vector-store',
   

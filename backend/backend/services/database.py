@@ -17,7 +17,6 @@ def create_application_logs():
                      session_id TEXT,
                      user_query TEXT,
                      gpt_response TEXT,
-                     user_id INTEGER,
                      model TEXT,
                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.close()
@@ -43,10 +42,10 @@ def create_users_table():
     conn.close()
 
 
-def insert_application_logs(session_id,user_id, user_query, gpt_response, model):
+def insert_application_logs(session_id, user_query, gpt_response, model):
     conn = get_db_connection()
-    conn.execute('INSERT INTO application_logs (session_id, user_id, user_query, gpt_response, model) VALUES (?, ?, ?, ?, ?)',
-                 (session_id,user_id, user_query, gpt_response, model))
+    conn.execute('INSERT INTO application_logs (session_id, user_query, gpt_response, model) VALUES (?, ?, ?, ?)',
+                 (session_id, user_query, gpt_response, model))
     conn.commit()
     conn.close()
 
@@ -70,16 +69,21 @@ def insert_application_logs(session_id,user_id, user_query, gpt_response, model)
 #     conn.close()
 #     return chat_history
 
-def get_chat_history(session_id,user_id):
+def get_chat_history(session_id=None):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT user_query, gpt_response FROM application_logs WHERE user_id = ? AND session_id = ? ORDER BY created_at', (user_id,session_id,))
+    if session_id:
+        cursor.execute('SELECT user_query, gpt_response FROM application_logs WHERE session_id = ? ORDER BY created_at DESC LIMIT 10', (session_id,))
+    else:
+        cursor.execute('SELECT user_query, gpt_response FROM application_logs ORDER BY created_at DESC LIMIT 10')
     messages = []
     for row in cursor.fetchall():
         messages.extend([
             {"role": "human", "content": row['user_query']},
             {"role": "ai", "content": row['gpt_response']}
         ])
+    # Reverse the messages to maintain chronological order
+    messages.reverse()
     conn.close()
     return messages
 
@@ -192,6 +196,21 @@ def reset_password_db(email: str, hashed_password: str):
     conn.commit()
     conn.close()
     return {"message": "Password reset successfully!"}
+
+def delete_chat_history(session_id=None):
+    conn = get_db_connection()
+    try:
+        if session_id:
+            conn.execute('DELETE FROM application_logs WHERE session_id = ?', (session_id,))
+        else:
+            conn.execute('DELETE FROM application_logs')
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error deleting chat history: {str(e)}")
+        return False
+    finally:
+        conn.close()
 
 # Initialize the database tables
 create_application_logs()

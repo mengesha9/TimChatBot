@@ -41,7 +41,11 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 embedding_function = OpenAIEmbeddings()
 
 # Initialize Chroma vector store
-vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedding_function)
+vectorstore = Chroma(
+    collection_name="netsuite_docs",
+    persist_directory="./chroma_db",
+    embedding_function=embedding_function
+)
 
 
 def load_and_split_document(file_path: str) -> List[Document]:
@@ -123,7 +127,8 @@ def index_netsuite_docs():
         
         # Persist the database
         print("Persisting vector store...")
-        vectorstore.persist()
+        # The persistence is now handled automatically by ChromaDB
+        # No need to call persist() explicitly
         
         print(f"\nSuccessfully indexed {len(documents)} chunks into vector store!")
         return len(documents)

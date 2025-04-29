@@ -3,6 +3,12 @@ import { useApp } from "../../hooks/useApp";
 import { LoadingSpinner } from "../common/LoadingStates";
 import { uploadDocument } from "../../services/document.service";
 import { getChatResponse } from "../../services/chat.service";
+import ReactMarkdown from 'react-markdown';
+
+// Function to remove markdown formatting
+const removeMarkdown = (text) => {
+  return text.replace(/\*\*/g, '').replace(/\*/g, '');
+};
 
 export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen }) {
   const { sessions, setSessions } = useApp();
@@ -66,6 +72,25 @@ export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen
         userId
       );
 
+      // Add assistant's response to the session immediately
+      setSessions((prev) => ({
+        ...prev,
+        [sessionId]: {
+          ...prev[sessionId],
+          messages: [
+            ...(prev[sessionId]?.messages || []),
+            {
+              role: "assistant",
+              content: response.answer,
+              timestamp: new Date().toISOString(),
+              userId: response.user_id
+            },
+          ],
+        },
+      }));
+      setIsLoading(false);
+
+      /* Commenting out streaming code
       // Start streaming the response
       let streamText = "";
       const chars = response.answer.split("");
@@ -79,26 +104,9 @@ export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen
         } else {
           clearInterval(streamInterval);
           setIsStreaming(false);
-
-          // Add assistant's response to the session
-          setSessions((prev) => ({
-            ...prev,
-            [sessionId]: {
-              ...prev[sessionId],
-              messages: [
-                ...(prev[sessionId]?.messages || []),
-                {
-                  role: "assistant",
-                  content: response.answer,
-                  timestamp: new Date().toISOString(),
-                  userId: response.user_id
-                },
-              ],
-            },
-          }));
-          setIsLoading(false);
         }
       }, 50);
+      */
     } catch (error) {
       console.error("Error sending message:", error);
       // Add error message to the chat
@@ -195,18 +203,22 @@ export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen
             sessions[sessionId]?.messages?.map((message, index) => (
               <div
                 key={`message-${index}`}
-              className={`flex ${
-                message.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[80%] rounded-lg p-4 ${
-                  message.role === "user"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-700 text-gray-200"
+                className={`flex ${
+                  message.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                <p className="whitespace-pre-wrap">{message.content}</p>
+                <div
+                  className={`max-w-[80%] rounded-lg p-4 ${
+                    message.role === "user"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-700 text-gray-200"
+                  }`}
+                >
+                  <div className="whitespace-pre-wrap">
+                    <ReactMarkdown>
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </div>
             ))
@@ -215,6 +227,7 @@ export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen
             No messages yet. Start a conversation!
             </div>
           )}
+          {/* Commenting out streaming display
           {isStreaming && (
           <div className="flex justify-start">
             <div className="max-w-[80%] rounded-lg p-4 bg-gray-700 text-gray-200">
@@ -222,6 +235,7 @@ export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen
             </div>
             </div>
           )}
+          */}
           <div ref={messagesEndRef} />
         </div>
 

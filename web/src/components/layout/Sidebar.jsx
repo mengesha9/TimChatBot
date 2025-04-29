@@ -111,6 +111,7 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 h-full bg-[#1C1E21] flex flex-col">
+      {/* New Chat Button - Commented out
       <div className="p-4">
         <button
           onClick={handleNewChat}
@@ -129,6 +130,7 @@ export default function Sidebar() {
           )}
         </button>
       </div>
+      */}
 
       {currentSession && (
         <div className="px-4 py-2">
@@ -144,6 +146,7 @@ export default function Sidebar() {
           </div>
         )}
         
+        {/* Temporarily hiding error display
         {error && (
           <div className="p-4 text-center text-red-400">
             <p>Error: {error}</p>
@@ -155,6 +158,7 @@ export default function Sidebar() {
             </button>
           </div>
         )}
+        */}
         
         {!isLoading && !error && (
           <div className="space-y-1 p-2">
