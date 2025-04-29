@@ -1,20 +1,20 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api.config';
 
-// Create a separate file for the context
+// Create the context
 export const AppContext = createContext(null);
 
-// Create the hook as a named function declaration
-function useApp() {
+// Create the hook
+export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('useApp must be used within an AppProvider');
   }
   return context;
-}
+};
 
-// Create the provider as a named function declaration
-function AppProvider({ children }) {
+// Create the provider component
+export const AppProvider = ({ children }) => {
   const [sessions, setSessions] = useState({});
   const [currentSession, setCurrentSession] = useState(null);
   const [preferences, setPreferences] = useState({
@@ -56,11 +56,6 @@ function AppProvider({ children }) {
   };
 
   const fetchChatHistory = async (userId) => {
-    if (!userId) {
-      setError('User ID is required to fetch chat history');
-      return;
-    }
-
     setIsLoading(true);
     setError(null);
 
@@ -68,7 +63,10 @@ function AppProvider({ children }) {
       // Clear localStorage first
       localStorage.removeItem('sessions');
       
-      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.CHAT_HISTORY}?user_id=${userId}`);
+      // Use default_user if no userId is provided
+      const effectiveUserId = userId || "default_user";
+      
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.CHAT_HISTORY}?user_id=${effectiveUserId}`);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch chat history: ${response.status}`);
@@ -102,7 +100,7 @@ function AppProvider({ children }) {
             timestamp: query.timestamp,
             status: 'complete',
             documents: query.documents || {}, // Include document highlighting data
-            userId: userId // Include user ID for document access
+            userId: effectiveUserId // Include user ID for document access
           });
         });
         
@@ -185,7 +183,18 @@ function AppProvider({ children }) {
       }
 
       const user = localStorage.getItem('user');
-      const { user_id } = JSON.parse(user);
+      let userId = "default_user"; // Default user ID for unregistered users
+
+      if (user) {
+        try {
+          const userData = JSON.parse(user);
+          if (userData && userData.user_id) {
+            userId = userData.user_id;
+          }
+        } catch (error) {
+          console.warn("Invalid user data in localStorage, using default user ID");
+        }
+      }
 
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.CHAT_NAME}`, {
         method: 'PATCH',
@@ -193,7 +202,7 @@ function AppProvider({ children }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id,
+          user_id: userId,
           session_id: sessionId,
           name: newName
         })
@@ -244,9 +253,20 @@ function AppProvider({ children }) {
 
     try {
       const user = localStorage.getItem('user');
-      const { user_id } = JSON.parse(user);
+      let userId = "default_user"; // Default user ID for unregistered users
 
-      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.DELETE_CHAT_HISTORY}?user_id=${user_id}&session_id=${sessionId}`, {
+      if (user) {
+        try {
+          const userData = JSON.parse(user);
+          if (userData && userData.user_id) {
+            userId = userData.user_id;
+          }
+        } catch (error) {
+          console.warn("Invalid user data in localStorage, using default user ID");
+        }
+      }
+
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.DELETE_CHAT_HISTORY}?user_id=${userId}&session_id=${sessionId}`, {
           method: 'DELETE'
       });
 
@@ -299,6 +319,4 @@ function AppProvider({ children }) {
       {children}
     </AppContext.Provider>
   );
-}
-
-export { useApp, AppProvider }; 
+}; 

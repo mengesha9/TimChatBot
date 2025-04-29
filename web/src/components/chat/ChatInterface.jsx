@@ -62,8 +62,19 @@ export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen
 
       // Get response from the chat service
       const user = localStorage.getItem("user");
-      const userp = JSON.parse(user);
-      const userId = userp.user_id;
+      let userId = "default_user"; // Default user ID for unregistered users
+
+      if (user) {
+        try {
+          const userp = JSON.parse(user);
+          if (userp && userp.user_id) {
+            userId = userp.user_id;
+          }
+        } catch (error) {
+          console.warn("Invalid user data in localStorage, using default user ID");
+        }
+      }
+
       const model = sessions[sessionId]?.settings?.model || 'gpt-4o-mini';
       const response = await getChatResponse(
         inputMessage,
@@ -118,8 +129,7 @@ export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen
             ...(prev[sessionId]?.messages || []),
             {
               role: "assistant",
-              content:
-                "Sorry, there was an error processing your request. Please try again.",
+              content: error.message || "Sorry, there was an error processing your request. Please try again.",
               timestamp: new Date().toISOString(),
               error: true,
             },

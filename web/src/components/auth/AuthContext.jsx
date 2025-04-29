@@ -15,13 +15,25 @@ export const AuthProvider = ({ children }) => {
         const storedUser = localStorage.getItem('user');
         if (storedUser && storedUser !== 'undefined') {
           const userData = JSON.parse(storedUser);
-          if (userData && userData.access_token) {
+          if (userData && userData.access_token && userData.user_id) {
             setUser(userData);
             setAuthenticated(true);
+          } else {
+            // Clear invalid user data
+            localStorage.removeItem('user');
+            setUser(null);
+            setAuthenticated(false);
           }
+        } else {
+          setUser(null);
+          setAuthenticated(false);
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
+        // Clear invalid user data
+        localStorage.removeItem('user');
+        setUser(null);
+        setAuthenticated(false);
       } finally {
         setIsLoading(false);
       }

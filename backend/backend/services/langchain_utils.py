@@ -75,11 +75,10 @@ def web_search_retriever(query: str) -> List[Document]:
         return []
 
 contextualize_q_system_prompt = (
-    "Given a chat history and the latest user question "
-    "which might reference context in the chat history, "
-    "formulate a standalone question which can be understood "
-    "without the chat history. Do NOT answer the question, "
-    "just reformulate it if needed and otherwise return it as is."
+    "You are a NetSuite documentation expert. Given a chat history and the latest user question "
+    "which might reference context in the chat history, formulate a standalone question which can be understood "
+    "without the chat history. Focus on NetSuite-specific terminology and concepts. "
+    "Do NOT answer the question, just reformulate it if needed and otherwise return it as is."
 )
 
 contextualize_q_prompt = ChatPromptTemplate.from_messages([
@@ -99,7 +98,10 @@ except FileNotFoundError:
 print("Dynamic Prompt Text: ", dynamic_prompt_text)
 
 qa_prompt = ChatPromptTemplate.from_messages([
-    ("system", dynamic_prompt_text),
+    ("system", "You are a NetSuite documentation expert. Use the following context from NetSuite's official documentation to answer the question. "
+              "Make sure to provide accurate and relevant information based on the context. "
+              "If the context doesn't contain enough information, say so clearly. "
+              "Use NetSuite-specific terminology and concepts in your response."),
     ("system", "Context: {context}"),
     MessagesPlaceholder(variable_name="chat_history"),
     ("human", "{input}")
@@ -110,8 +112,11 @@ def format_answer(docs: List[Document], query: str, chat_history: List[Dict], ll
     print("\n🤖 Formatting answer...")
     # Create a prompt for the answer
     answer_prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are a helpful AI assistant. Use the following context to answer the question. "
-                  "Make sure to provide accurate and relevant information based on the context."),
+        ("system", "You are a NetSuite documentation expert. Use the following context from NetSuite's official documentation to answer the question. "
+                  "Make sure to provide accurate and relevant information based on the context. "
+                  "If the context doesn't contain enough information, say so clearly. "
+                  "Use NetSuite-specific terminology and concepts in your response. "
+                  "Include relevant NetSuite features, modules, or functionality when applicable."),
         ("system", "Context: {context}"),
         MessagesPlaceholder(variable_name="chat_history"),
         ("human", "{question}")
@@ -161,8 +166,10 @@ def get_rag_chain(model: str) -> Runnable:
         print(f"💬 Using {len(chat_history)} previous conversation turns")
         # Create a prompt for reformulation
         reformulation_prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are a helpful assistant that reformulates questions based on chat history. "
-                      "Your goal is to make the question more specific and clear by incorporating context from the chat history."),
+            ("system", "You are a NetSuite documentation expert. Reformulate questions based on chat history. "
+                      "Your goal is to make the question more specific and clear by incorporating context from the chat history. "
+                      "Focus on NetSuite-specific terminology and concepts. "
+                      "Make sure the reformulated question maintains the original intent while being more precise."),
             ("human", "Chat History:\n{chat_history}\n\nCurrent Question: {question}\n\nReformulated Question:")
         ])
         

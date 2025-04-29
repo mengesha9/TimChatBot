@@ -138,6 +138,7 @@ export default function Sidebar() {
         </div>
       )}
 
+      {/* Commenting out the chat sessions list
       <div className="flex-1 overflow-y-auto">
         {isLoading && (
           <div className="p-4 text-center text-gray-400">
@@ -145,20 +146,6 @@ export default function Sidebar() {
             <p>Loading chat history...</p>
           </div>
         )}
-        
-        {/* Temporarily hiding error display
-        {error && (
-          <div className="p-4 text-center text-red-400">
-            <p>Error: {error}</p>
-            <button 
-              onClick={() => fetchChatHistory(userId)}
-              className="mt-2 px-3 py-1 bg-red-900 text-white rounded-md hover:bg-red-800 text-sm"
-            >
-              Retry
-            </button>
-          </div>
-        )}
-        */}
         
         {!isLoading && !error && (
           <div className="space-y-1 p-2">
@@ -194,9 +181,6 @@ export default function Sidebar() {
                       <div className="text-sm font-medium truncate text-gray-200">
                         {session.title || 'New Chat'}
                       </div>
-                      {/* <div className="text-xs text-gray-400">
-                        {formatDate(session.createdAt)}
-                      </div> */}
                     </button>
                   )}
                   
@@ -224,6 +208,7 @@ export default function Sidebar() {
           </div>
         )}
       </div>
+      */}
     </aside>
   );
 } 
