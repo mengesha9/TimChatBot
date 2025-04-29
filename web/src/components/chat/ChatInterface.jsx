@@ -208,11 +208,7 @@ export default function ChatInterface({ sessionId, isDocumentOpen, isSidebarOpen
                 }`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg p-4 ${
-                    message.role === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-700 text-gray-200"
-                  }`}
+                  className={`max-w-[80%] rounded-lg p-4 bg-gray-700 text-gray-200`}
                 >
                   <div className="whitespace-pre-wrap">
                     <ReactMarkdown>
