@@ -32,7 +32,7 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Allows all origins
+    allow_origins=["https://tim-chat-kxpp6dw3p-mengistu-ashebirs-projects.vercel.app", "http://localhost:3000"],  # Add your Vercel domain
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
